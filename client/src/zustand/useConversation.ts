@@ -3,7 +3,7 @@ import { create } from "zustand";
 export type ConversationType = {
   id: string;
   fullname: string;
-  profilePic: string;
+  profilePicture: string;
 };
 
 export type MessageType = {

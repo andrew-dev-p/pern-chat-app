@@ -13,7 +13,7 @@ type AuthUserType = {
   id: string;
   fullName: string;
   email: string;
-  profilePic: string;
+  profilePicture: string;
   gender: string;
 };
 
