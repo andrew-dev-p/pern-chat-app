@@ -14,13 +14,15 @@ export const login = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      res.status(400).json({ error: "Invalid credentials" });
+      return;
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      res.status(400).json({ error: "Invalid credentials" });
+      return;
     }
 
     generateToken(user.id, res);
@@ -44,11 +46,13 @@ export const register = async (req: Request, res: Response) => {
     const { username, fullname, password, confirmPassword, gender } = req.body;
 
     if (!username || !fullname || !password || !confirmPassword || !gender) {
-      return res.status(400).json({ error: "All fields are required" });
+      res.status(400).json({ error: "All fields are required" });
+      return;
     }
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ error: "Passwords do not match" });
+      res.status(400).json({ error: "Passwords do not match" });
+      return;
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -58,7 +62,8 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
+      res.status(400).json({ error: "Username already exists" });
+      return;
     }
 
     const salt = await bcrypt.genSalt(10);
