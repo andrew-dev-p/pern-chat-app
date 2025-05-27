@@ -1,11 +1,22 @@
-const Message = ({ message }: { message?: any }) => {
-  const fromMe = message.fromMe;
-  const chatClass = fromMe ? "chat-end" : "chat-start";
+import { useAuthContext } from "../../context/AuthContext";
+import { extractTime } from "../../lib/utils";
+import useConversation, {
+  type MessageType,
+} from "../../zustand/useConversation";
+
+const Message = ({ message }: { message: MessageType }) => {
+  const { authUser } = useAuthContext();
+  const { selectedConversation } = useConversation();
+
+  const fromMe = message?.senderId === authUser?.id;
   const img = fromMe
-    ? "https://avatar.iran.liara.run/public/boy?username=johndoe"
-    : "https://avatar.iran.liara.run/public/boy?username=janedoe";
+    ? authUser?.profilePicture
+    : selectedConversation?.profilePicture;
+  const chatClass = fromMe ? "chat-end" : "chat-start";
 
   const bubbleBg = fromMe ? "bg-blue-500" : "";
+  const shakeClass = message.shouldShake ? "shake" : "";
+
   return (
     <div className={`chat ${chatClass}`}>
       <div className="hidden md:block chat-image avatar">
@@ -13,11 +24,13 @@ const Message = ({ message }: { message?: any }) => {
           <img alt="Tailwind CSS chat bubble component" src={img} />
         </div>
       </div>
-      <p className={`chat-bubble text-white ${bubbleBg} text-sm md:text-md`}>
+      <p
+        className={`chat-bubble text-white ${bubbleBg} ${shakeClass} text-sm md:text-md`}
+      >
         {message.body}
       </p>
       <span className="chat-footer opacity-50 text-xs flex gap-1 items-center text-white">
-        22:59
+        {extractTime(message.createdAt)}
       </span>
     </div>
   );
