@@ -3,6 +3,35 @@ import prisma from "../lib/prisma.js";
 import { generateToken } from "../lib/utils.js";
 import bcrypt from "bcryptjs";
 
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    if (!user) {
+      res.status(404).json({
+        error: "User not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      id: user.id,
+      fullname: user.fullname,
+      username: user.username,
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Couldn't get user",
+      details: error instanceof Error ? error.message : error,
+    });
+  }
+};
+
 export const login = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -99,7 +128,7 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (req: Request, res: Response) => {
+export const logout = (req: Request, res: Response) => {
   try {
     res.cookie("jwt", "", { maxAge: 0 });
     res.status(200).json({

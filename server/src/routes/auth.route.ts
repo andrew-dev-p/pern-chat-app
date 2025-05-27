@@ -1,7 +1,15 @@
 import express from "express";
-import { login, register, logout } from "../controllers/auth.controller.js";
+import {
+  login,
+  register,
+  logout,
+  getMe,
+} from "../controllers/auth.controller.js";
+import { protectedRoute } from "../middlewares/protectedRoute.js";
 
 const router = express.Router();
+
+router.get("/me", protectedRoute, getMe);
 
 router.post("/login", login);
 
