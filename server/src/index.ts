@@ -4,6 +4,11 @@ import messageRoute from "./routes/messages.route.js";
 
 const app = express();
 
+app.use(express.json());
+
+import dotenv from "dotenv";
+dotenv.config();
+
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoute);
 
