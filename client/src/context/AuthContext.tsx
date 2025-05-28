@@ -7,7 +7,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import toast from "react-hot-toast";
 
 type AuthUserType = {
   id: string;
@@ -36,7 +35,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [authUser, setAuthUser] = useState<AuthUserType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // logic will go here
   useEffect(() => {
     const fetchAuthUser = async () => {
       try {
@@ -45,6 +43,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         if (!res.ok) {
           throw new Error(data.error);
         }
+
         setAuthUser(data);
       } catch (error) {
         console.error(error);

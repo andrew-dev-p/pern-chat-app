@@ -1,4 +1,4 @@
-// import { useSocketContext } from "../../context/SocketContext";
+import { useSocketContext } from "../../context/SocketContext";
 import useConversation, {
   type ConversationType,
 } from "../../zustand/useConversation";
@@ -13,10 +13,9 @@ const Conversation = ({
   const { setSelectedConversation, selectedConversation } = useConversation();
   const isSelected = selectedConversation?.id === conversation.id;
 
-  // const { onlineUsers } = useSocketContext();
+  const { onlineUsers } = useSocketContext();
 
-  // const isOnline = onlineUsers.includes(conversation.id);
-  const isOnline = true;
+  const isOnline = onlineUsers.includes(conversation.id);
 
   return (
     <>
@@ -26,21 +25,15 @@ const Conversation = ({
         }`}
         onClick={() => setSelectedConversation(conversation)}
       >
-        <div className={`avatar ${isOnline ? "online" : ""}`}>
-          <div className="w-8 md:w-12 rounded-full">
-            {conversation.profilePicture ? (
-              <img
-                src={conversation.profilePicture}
-                className="bg-gray-300 animate-pulse"
-                style={{ objectFit: "cover" }}
-                onLoad={(e) =>
-                  e.currentTarget.classList.remove("animate-pulse")
-                }
-              />
-            ) : (
-              <div className="h-12 w-12 rounded-full bg-gray-300" />
-            )}
-          </div>
+        <div className="relative w-8 md:w-12 rounded-full">
+          <img
+            src={conversation.profilePicture}
+            alt="user avatar"
+            className="w-8 md:w-12 rounded-full"
+          />
+          {isOnline && (
+            <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
+          )}
         </div>
 
         <div className="flex flex-col flex-1">
