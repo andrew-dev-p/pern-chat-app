@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { getReceiverSocketId, io } from "../socket/socket.js";
 import prisma from "../lib/prisma.js";
 
 export const sendMessage = async (req: Request, res: Response) => {
@@ -48,11 +49,16 @@ export const sendMessage = async (req: Request, res: Response) => {
       });
     }
 
+    const receiverSocketId = getReceiverSocketId(receiverId);
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
     res.status(201).json(newMessage);
-  } catch (error) {
-    res.status(500).json({
-      error: "Internal server error",
-    });
+  } catch (error: any) {
+    console.error("Error in sendMessage: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -77,12 +83,12 @@ export const getMessages = async (req: Request, res: Response) => {
     });
 
     if (!conversation) {
-      res.status(200).json([]);
-      return;
+      return res.status(200).json([]);
     }
 
     res.status(200).json(conversation.messages);
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Error in getMessages: ", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
